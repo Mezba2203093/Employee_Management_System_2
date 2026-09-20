@@ -27,7 +27,7 @@ def departments():
 @hr_bp.post("/departments")
 @require_admin
 def add_department():
-    name = str(request.get_json(silent=True) or {}).get("name", "").strip()
+    name = str((request.get_json(silent=True) or {}).get("name", "")).strip()
     if not 2 <= len(name) <= 100:
         return jsonify(error="Department name must be 2-100 characters"), 400
     db.session.add(Department(name=name))
