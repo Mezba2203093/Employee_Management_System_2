@@ -1,0 +1,98 @@
+:root {
+  font-family: system-ui, Arial, sans-serif;
+  color: #192437;
+  background: #f1f5f9;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1050px; margin: auto; padding: 24px; }
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+header h1 { flex: 1; font-size: 24px; }
+
+.card {
+  background: white;
+  padding: 20px;
+  margin: 18px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px #19243713;
+}
+h2 { margin: 0 0 12px; font-size: 20px; }
+
+form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 5px;
+  font-size: 14px;
+  min-width: 175px;
+  text-transform: capitalize;
+}
+
+input, select, button {
+  font: inherit;
+  padding: 9px;
+  border: 1px solid #abb8c6;
+  border-radius: 6px;
+}
+button {
+  color: white;
+  background: #1959a6;
+  border-color: #1959a6;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.row {
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+}
+.stats div {
+  padding: 12px;
+  background: #e7f1ff;
+  border-radius: 6px;
+}
+.stats strong { display: block; font-size: 24px; }
+.stats small { text-transform: capitalize; }
+
+.scroll { overflow: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 14px;
+}
+td, th {
+  border-bottom: 1px solid #e0e6ec;
+  padding: 9px;
+  text-align: left;
+}
+
+.login { max-width: 420px; margin: 8vh auto; }
+.login form { display: grid; }
+.error { color: #a11321; }
+.success { color: #14612b; }
