@@ -1,8 +1,8 @@
-"""Create five database tables
+"""align schema with API contract
 
-Revision ID: 3247623f701d
+Revision ID: d1d44a1a4c70
 Revises: 
-Create Date: 2026-09-20 21:57:56.028686
+Create Date: 2026-09-21 04:17:09.430635
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3247623f701d'
+revision = 'd1d44a1a4c70'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,68 +21,73 @@ def upgrade():
     op.create_table('departments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('description', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
-    op.create_table('users',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=80), nullable=False),
-    sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('password_hash', sa.String(length=255), nullable=False),
-    sa.Column('role', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
-    )
     op.create_table('employees',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('employee_code', sa.String(length=20), nullable=False),
-    sa.Column('full_name', sa.String(length=120), nullable=False),
+    sa.Column('code', sa.String(length=20), nullable=False),
+    sa.Column('name', sa.String(length=120), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('department_id', sa.Integer(), nullable=False),
     sa.Column('designation', sa.String(length=80), nullable=True),
-    sa.Column('joining_date', sa.Date(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('base_salary', sa.Numeric(precision=12, scale=2), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['department_id'], ['departments.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('employee_code')
+    sa.UniqueConstraint('code'),
+    sa.UniqueConstraint('email')
     )
     op.create_table('attendance',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('employee_id', sa.Integer(), nullable=False),
-    sa.Column('attendance_date', sa.Date(), nullable=False),
+    sa.Column('work_date', sa.Date(), nullable=False),
     sa.Column('check_in', sa.DateTime(timezone=True), nullable=True),
     sa.Column('check_out', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('work_minutes', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
-    sa.CheckConstraint("status IN ('Present', 'Absent', 'Late', 'Leave')", name='valid_attendance_status'),
+    sa.CheckConstraint("status IN ('present', 'absent', 'late', 'leave')", name='valid_attendance_status'),
     sa.ForeignKeyConstraint(['employee_id'], ['employees.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('employee_id', 'attendance_date', name='unique_employee_attendance_date')
+    sa.UniqueConstraint('employee_id', 'work_date', name='unique_employee_attendance_date')
+    )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
+    sa.Column('password_hash', sa.String(length=255), nullable=False),
+    sa.Column('role', sa.String(length=20), nullable=False),
+    sa.Column('employee_id', sa.Integer(), nullable=True),
+    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['employee_id'], ['employees.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
     )
     op.create_table('leave_requests',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('employee_id', sa.Integer(), nullable=False),
+    sa.Column('leave_type', sa.String(length=40), nullable=False),
     sa.Column('start_date', sa.Date(), nullable=False),
     sa.Column('end_date', sa.Date(), nullable=False),
     sa.Column('reason', sa.Text(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
+    sa.Column('reviewed_by', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.CheckConstraint("status IN ('Pending', 'Approved', 'Rejected')", name='valid_leave_status'),
+    sa.CheckConstraint("status IN ('pending', 'approved', 'rejected')", name='valid_leave_status'),
     sa.CheckConstraint('end_date >= start_date', name='valid_leave_date_range'),
     sa.ForeignKeyConstraint(['employee_id'], ['employees.id'], ),
+    sa.ForeignKeyConstraint(['reviewed_by'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    # end Alembic commands #
+    # ### end Alembic commands ###
 
 
 def downgrade():
-    # commands auto generated by Alembic - please adjust#
+    # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('leave_requests')
+    op.drop_table('users')
     op.drop_table('attendance')
     op.drop_table('employees')
-    op.drop_table('users')
     op.drop_table('departments')
-    #  end Alembic commands #
+    # ### end Alembic commands ###
